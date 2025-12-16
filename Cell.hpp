@@ -25,6 +25,8 @@ public:
             if (CellState == Snake) {
                 ++SnakeDuration;
             }
+        } else if (E.type == RESTART_GAME) {
+            Initialize();
         }
     }
     void Tick(Uint32 DeltaTime) {}
@@ -85,6 +87,11 @@ private:
         };
 
         if (isThisCell) {
+            if (CellState == Snake) {
+                SDL_Event Event{ UserEvents::GAME_LOST };
+                SDL_PushEvent(&Event);
+                return;
+            }
             if (CellState == Apple) {
                 SDL_Event Event{ UserEvents::APPLE_EATEN };
                 SDL_PushEvent(&Event);

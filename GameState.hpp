@@ -11,9 +11,18 @@ public:
             HandleKeyEvent(E.key);
         } else if (E.type == APPLE_EATEN) {
             Snake.Length++;
+            if (Snake.Length == Config::MAX_LENGTH) {
+                SDL_Event Event{ GAME_WON };
+                SDL_PushEvent(&Event);
+            }
+        } else if (E.type == RESTART_GAME) {
+            RestartGame();
+        } else if (E.type == GAME_LOST) {
+            isGameOver = true;
         }
     }
     void Tick(Uint32 DeltaTime) {
+        if (isPaused || isGameOver) { return; }
         ElapsedTime += DeltaTime;
         if (ElapsedTime >= Config::ADVANCE_INTERVAL) {
             ElapsedTime = 0;
@@ -23,6 +32,7 @@ public:
 
 private:
     void HandleKeyEvent(SDL_KeyboardEvent& E) {
+        if (isGameOver) { return; }
         switch(E.keysym.sym) {
             case SDLK_UP:
             case SDLK_w:
@@ -48,6 +58,13 @@ private:
                     NextDirection = Right;
                 }
                 break;
+            case SDLK_ESCAPE:
+                if (isPaused) {
+                    isPaused = false;
+                    UpdateSnake();
+                } else if (!isPaused) {
+                    isPaused = true;
+                }
         }
     }
 
@@ -68,11 +85,31 @@ private:
                 break;
         }
 
-        SDL_Event Event{ UserEvents::ADVANCE };
-        Event.user.data1 = &Snake;
-        SDL_PushEvent(&Event);
+        if (
+            Snake.HeadRow < 0 ||
+            Snake.HeadRow >= Config::GRID_ROWS ||
+            Snake.HeadCol < 0 || 
+            Snake.HeadCol >= Config::GRID_COLUMNS
+        ) {
+            SDL_Event Event{ UserEvents::GAME_LOST };
+            SDL_PushEvent(&Event);
+        } else {
+            SDL_Event Event{ UserEvents::ADVANCE };
+            Event.user.data1 = &Snake;
+            SDL_PushEvent(&Event);
+        }
     }
 
+    void RestartGame() {
+        isGameOver = false;
+        isPaused = true;
+        ElapsedTime = 0;
+        Snake = { Config::GRID_ROWS / 2, 3, 2, Right };
+        NextDirection = Right;
+    }
+
+    bool isGameOver{ false };
+    bool isPaused{ true };
     MovementDirection NextDirection{ Right };
     Uint32 ElapsedTime;
     SnakeData Snake{ Config::GRID_ROWS / 2, 3, 2, Right };

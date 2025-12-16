@@ -6,11 +6,11 @@
 
 class Text {
 public:
-    Text(const std::string& InitialText, int FontSize = 12) : Content{ InitialText }, Font{ nullptr }, TextSurface{ nullptr } {
+    Text(const std::string& InitialText, int FontSize) : Content{ InitialText }, Font{ nullptr }, TextSurface{ nullptr } {
         Font = TTF_OpenFont(Config::FONT.c_str(), FontSize);
         CheckSDLError("Opening Font");
 
-        
+        SetText(InitialText);
     }
 
     void Render(SDL_Surface* Surface, SDL_Rect* Rect) {

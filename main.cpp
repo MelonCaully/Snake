@@ -16,8 +16,8 @@ int main(int argc, char** argv) {
     TTF_Init();
     CheckSDLError("Initializing SDL_ttf");
 
-    Window GameWindow{};
-    GameUI UI{};
+    Window GameWindow;
+    GameUI UI;
     GameState State;
     Uint32 PreviousTick{ SDL_GetTicks() };
     Uint32 CurrentTick;
@@ -31,7 +31,7 @@ int main(int argc, char** argv) {
         while(SDL_PollEvent(&Event)) {
             UI.HandleEvent(Event);
             State.HandleEvent(Event);
-            if (Event.type == SDL_QUIT || Event.key.keysym.sym == SDLK_ESCAPE) {
+            if (Event.type == SDL_QUIT) {
                 SDL_Quit();
                 IMG_Quit();
                 return 0;
