@@ -18,8 +18,13 @@ public:
 
     void HandleEvent(SDL_Event& E) {
         using namespace UserEvents;
+        using namespace Config;
         if (E.type == SDL_MOUSEBUTTONDOWN) {
             HandleClick(E.button);       
+        } else if (E.type == GAME_LOST || E.type == GAME_WON) {
+            ButtonColor = BUTTON_HIGHLIGHT_COLOR;
+        } else if (E.type == RESTART_GAME) {
+            ButtonColor = BUTTON_COLOR;
         }
     }
 

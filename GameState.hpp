@@ -36,35 +36,47 @@ private:
         switch(E.keysym.sym) {
             case SDLK_UP:
             case SDLK_w:
+                Unpause();
                 if (Snake.Direction != Down) {
                     NextDirection = Up;
                 }
                 break;
             case SDLK_DOWN:
             case SDLK_s:
+                Unpause();
                 if (Snake.Direction != Up) {
                     NextDirection = Down;
                 }
                 break;
             case SDLK_LEFT:
             case SDLK_a:
+                Unpause();
                 if (Snake.Direction != Right) {
                     NextDirection = Left;
                 }
                 break;
             case SDLK_RIGHT:
             case SDLK_d:
+                Unpause();
                 if (Snake.Direction != Left) {
                     NextDirection = Right;
                 }
                 break;
-            case SDLK_ESCAPE:
-                if (isPaused) {
-                    isPaused = false;
-                    UpdateSnake();
-                } else if (!isPaused) {
-                    isPaused = true;
-                }
+            case SDLK_SPACE:
+                Pause();
+        }
+    }
+
+    void Unpause() {
+        if (isPaused) {
+            isPaused = false;
+            UpdateSnake();
+        }
+    }
+
+    void Pause() {
+        if (!isPaused) {
+            isPaused = true;
         }
     }
 

@@ -17,14 +17,12 @@ add_executable(Snake
   "Engine/Random.hpp"
   "GameUI.hpp"
   "Assets.hpp"
-
-  # Files that will be added later:
-  # "GameState.h"
-  # "Cell.h"
-  # "Grid.h"
-  # "SnakeData.h"
-  # "ScoreCounter.h"
-  # "RestartButton.h"
+  "GameState.hpp"
+  "Cell.hpp"
+  "Grid.hpp"
+  "SnakeData.hpp"
+  "ScoreCounter.hpp"
+  "RestartButton.hpp"
 )
 
 target_link_libraries(Snake PRIVATE

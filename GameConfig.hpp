@@ -30,7 +30,11 @@ namespace Config {
     inline constexpr SDL_Color CELL_COLOR_A{ 171, 214, 82, 255 };
     inline constexpr SDL_Color CELL_COLOR_B{ 161, 208, 74, 255 };
     inline constexpr SDL_Color SNAKE_COLOR{ 67, 117, 234, 255 };
+    inline constexpr SDL_Color SNAKE_LOST_COLOR{  127, 67, 97, 255 };
+    inline constexpr SDL_Color SNAKE_VICTORY_COLOR{ 255, 40, 0, 255 };
     inline constexpr SDL_Color BUTTON_COLOR{ 73, 117, 46, 255 };
+    inline constexpr SDL_Color BUTTON_HIGHLIGHT_COLOR{ 67, 117, 234, 255 };
+    inline constexpr SDL_Color SCORE_BACKGROUND_COLOR{ 73, 117, 46, 255 };
 
     // Asset Paths
     inline const std::string APPLE_IMAGE{ "Assets/apple.png" };
