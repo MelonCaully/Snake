@@ -6,5 +6,5 @@ struct SnakeData {
     int HeadRow;
     int HeadCol;
     int Length;
-    MovementDirection Direction;
+    MovementDirection Direction{ Right };
 };

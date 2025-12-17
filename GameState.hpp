@@ -63,7 +63,7 @@ private:
                 }
                 break;
             case SDLK_SPACE:
-                Pause();
+                if (!isPaused) { isPaused = true; }
         }
     }
 
@@ -71,12 +71,6 @@ private:
         if (isPaused) {
             isPaused = false;
             UpdateSnake();
-        }
-    }
-
-    void Pause() {
-        if (!isPaused) {
-            isPaused = true;
         }
     }
 
@@ -120,9 +114,9 @@ private:
         NextDirection = Right;
     }
 
-    bool isGameOver{ false };
     bool isPaused{ true };
+    bool isGameOver{ false };
+    Uint32 ElapsedTime{ 0 };
     MovementDirection NextDirection{ Right };
-    Uint32 ElapsedTime;
-    SnakeData Snake{ Config::GRID_ROWS / 2, 3, 2, Right };
+    SnakeData Snake{ Config::GRID_ROWS / 2, 3, 2 };
 };

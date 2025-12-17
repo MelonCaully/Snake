@@ -36,6 +36,8 @@ public:
     void Tick(Uint32 DeltaTime) {
         if (CellState == Snake && FillPercent < 1) {
             GrowHead(DeltaTime);
+        } else if (CellState != Snake && FillPercent > 0) {
+            ShrinkTail(DeltaTime);
         }
     }
 
@@ -138,6 +140,22 @@ private:
         } else if (FillDirection == Left) {
             SnakeRect.x = BackgroundRect.x + CELL_SIZE * (1 - FillPercent);
         } else if (FillDirection == Up) {
+            SnakeRect.y = BackgroundRect.y + CELL_SIZE * (1 - FillPercent);
+        }
+    }
+
+    void ShrinkTail(float DeltaTime) {
+        using namespace Config;
+        FillPercent -= DeltaTime / ADVANCE_INTERVAL;
+        if (FillPercent < 0) FillPercent = 0;
+
+        if (FillDirection == Right) {
+            SnakeRect.x = BackgroundRect.x + CELL_SIZE * (1 - FillPercent);
+        } else if (FillDirection == Left) {
+            SnakeRect.w = CELL_SIZE * FillPercent;
+        } else if (FillDirection == Up) {
+            SnakeRect.h = CELL_SIZE * FillPercent;
+        } else if (FillDirection == Down) {
             SnakeRect.y = BackgroundRect.y + CELL_SIZE * (1 - FillPercent);
         }
     }
