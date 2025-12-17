@@ -25,11 +25,19 @@ public:
             if (CellState == Snake) {
                 ++SnakeDuration;
             }
+        } else if (E.type == GAME_LOST) {
+            SnakeColor = Config::SNAKE_LOST_COLOR;
+        } else if (E.type == GAME_WON) {
+            SnakeColor = Config::SNAKE_VICTORY_COLOR;
         } else if (E.type == RESTART_GAME) {
             Initialize();
         }
     }
-    void Tick(Uint32 DeltaTime) {}
+    void Tick(Uint32 DeltaTime) {
+        if (CellState == Snake && FillPercent < 1) {
+            GrowHead(DeltaTime);
+        }
+    }
 
     void Render(SDL_Surface* Surface) {
         SDL_FillRect(Surface, &BackgroundRect, 
@@ -43,13 +51,13 @@ public:
 
         if (CellState == Apple) {
             Assets.Apple.Render(Surface, &BackgroundRect);
-        } else if (CellState == Snake) {
-            SDL_FillRect(Surface, &BackgroundRect,
+        } else if (FillPercent > 0) {
+            SDL_FillRect(Surface, &SnakeRect,
             SDL_MapRGB(
                 Surface->format,
-                Config::SNAKE_COLOR.r,
-                Config::SNAKE_COLOR.g,
-                Config::SNAKE_COLOR.b
+                SnakeColor.r,
+                SnakeColor.g,
+                SnakeColor.b
             ));
         };
     }
@@ -64,15 +72,21 @@ public:
 private:
     void Initialize() {
         CellState = Empty;
+        SnakeColor = Config::SNAKE_COLOR;
         SnakeDuration = 0;
+        SnakeRect = BackgroundRect;
+        FillPercent = 0.0;
+        FillDirection = Right;
         int MiddleRow{ Config::GRID_ROWS / 2 };
 
         if (Row == MiddleRow && Col == 2) {
             CellState = Snake;
             SnakeDuration = 1;
+            FillPercent = 1.0;
         } else if (Row == MiddleRow && Col == 3) {
             CellState = Snake;
             SnakeDuration = 2;
+            FillPercent = 1.0;
         } else if (Row == MiddleRow && Col == 11) {
             CellState = Apple;
         }
@@ -98,17 +112,42 @@ private:
             }
             CellState = Snake;
             SnakeDuration = Data->Length;
+            FillDirection = Data->Direction;
+            FillPercent = 0;
         } else if (CellState == Snake) {
-            --SnakeDuration;
-            if (SnakeDuration == 0) {
+            if (SnakeDuration == Data->Length) {
+                FillDirection = Data->Direction;
+            }
+            SnakeDuration--;
+            if (SnakeDuration <= 0) {
                 CellState = Empty;
             }
+        }
+    }
+
+    void GrowHead(float DeltaTime) {
+        using namespace Config;
+        FillPercent += DeltaTime / ADVANCE_INTERVAL;
+        if (FillPercent > 1) { FillPercent = 1; }
+
+        SnakeRect = BackgroundRect;
+        if (FillDirection == Right) {
+            SnakeRect.w = CELL_SIZE * FillPercent;
+        } else if (FillDirection == Down) {
+            SnakeRect.h = CELL_SIZE * FillPercent;
+        } else if (FillDirection == Left) {
+            SnakeRect.x = BackgroundRect.x + CELL_SIZE * (1 - FillPercent);
+        } else if (FillDirection == Up) {
+            SnakeRect.y = BackgroundRect.y + CELL_SIZE * (1 - FillPercent);
         }
     }
 
     int Row;
     int Col;
     int SnakeDuration{ 0 };
+    float FillPercent{ 0 };
+    MovementDirection FillDirection{ Right };
+    SDL_Color SnakeColor{ Config::SNAKE_COLOR };
     Assets& Assets;
     CellState CellState;
     SDL_Rect BackgroundRect{
@@ -116,6 +155,9 @@ private:
         Row * Config::CELL_SIZE + Config::PADDING,
         Config::CELL_SIZE,
         Config::CELL_SIZE
+    };
+    SDL_Rect SnakeRect{
+
     };
     SDL_Color BackgroundColor{ 
         (Row + Col) % 2 == 0 
